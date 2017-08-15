@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h2 Sign In
+  form(method='POST', action='')
+    div.form-group(class=(errors && errors.username ? 'has-error' : ''))
+      label(for="username") Username
+      input(type="text", class="form-control", name="username", id="username", placeholder="username", required="true",
+        aria-describedby="usernameHelpBlock",
+        value=(username ? username : ''))
+      span(id="usernameHelpBlock", class="help-block")= (errors && errors.username ? errors.username.msg : '')
+    div.form-group(class=(errors && errors.password ? 'has-error' : ''))
+      label(for="password") Password
+      input(type="password", class="form-control", name="password", id="password", placeholder="password", required="true"
+        aria-describedby="passwordHelpBlock")
+      span(id="passwordHelpBlock", class="help-block")= (errors && errors.password ? errors.password.msg : '')
+    button(type="submit", class="btn btn-primary") Login

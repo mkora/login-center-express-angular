@@ -1,0 +1,44 @@
+doctype html
+html(lang='en')
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+      
+  body
+    div(class='container')
+      h3(class='text-muted') Basic Login Project
+      div(class='masthead')
+          block navbar
+            nav
+              ul(class='nav nav-justified')
+                if user
+                  li
+                    a(href='/users/dashboard') Dashboard
+                  li
+                    a(href='/users/logout') Logout
+                else                 
+                  li
+                    a(href='/users/login') Login
+                  li
+                    a(href='/users/register') Register
+                  
+      div(class='row')
+        div(class='col-sm-12')
+          if success_msg.length
+            div(class='alert alert-success', role='alert')
+              strong Well done! #{success_msg}
+          if error_msg.length
+            div(class='alert alert-danger', role='alert')
+              strong Oh snap! #{error_msg}
+          if error !== undefined && error.length
+            div(class='alert alert-danger', role='alert')
+              strong Oh snap! #{error}
+              
+      div(class='row')
+        div(class='col-sm-12')
+          block content

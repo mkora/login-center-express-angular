@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  h2 Sign Up
+  form(method='POST', action='')
+    div.form-group(class=(errors && errors.username ? 'has-error' : ''))
+      label(for="username") Username
+      input(type="text", class="form-control", name="username", id="username", placeholder="username", required="true",
+        aria-describedby="usernameHelpBlock",
+        value=(newUser ? newUser.username : ''))
+      span(id="usernameHelpBlock", class="help-block")= (errors && errors.username ? errors.username.msg : '')
+    div.form-group(class=(errors && errors.firstName ? 'has-error' : ''))
+      label(for="firstName") First Name
+      input(type="text", class="form-control", name="firstName", id="firstName", placeholder="first name", required="true",
+        aria-describedby="firstNameHelpBlock",
+        value=(newUser ? newUser.firstName : ''))
+      span(id="firstNameHelpBlock", class="help-block")= (errors && errors.firstName ? errors.firstName.msg : '')
+    div.form-group(class=(errors && errors.lastName ? 'has-error' : ''))
+      label(for="lastName") Last Name
+      input(type="text", class="form-control", name="lastName", id="lastName", placeholder="last name", required="true",
+        aria-describedby="lastNameHelpBlock",
+        value=(newUser ? newUser.lastName : ''))
+      span(id="lastNameHelpBlock", class="help-block")= (errors && errors.lastName ? errors.lastName.msg : '')
+    div.form-group(class=(errors && errors.email ? 'has-error' : ''))
+      label(for="email") Email address
+      input(type="email", class="form-control", name="email", id="email", placeholder="name@example.com", required="true",
+        aria-describedby="emailHelpBlock",
+        value=(newUser ? newUser.email : ''))
+      span(id="emailHelpBlock", class="help-block")= (errors && errors.email ? errors.email.msg : '')      
+    div.form-group(class=(errors && errors.password ? 'has-error' : ''))
+      label(for="password") Password
+      input(type="password", class="form-control", name="password", id="password", placeholder="password", required="true",
+        aria-describedby="passwordHelpBlock")
+      span(id="passwordHelpBlock", class="help-block")= (errors && errors.password ? errors.password.msg : '') 
+    div.form-group(class=(errors && errors.confirm ? 'has-error' : ''))
+      label(for="confirm") Confirm password 
+      input(type="password", class="form-control", name="confirm", id="confirm", placeholder="confirm password", required="true",
+        aria-describedby="confirmHelpBlock")
+      span(id="confirmHelpBlock", class="help-block")= (errors && errors.confirm ? errors.confirm.msg : '')       
+    button(type="submit", class="btn btn-primary") Register Me
