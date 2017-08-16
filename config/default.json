@@ -3,7 +3,5 @@
     "uri": "mongodb://localhost/basic_login",
     "options": {}
   },
-  "cookie" : {
-    "secret": ""
-  }
+  "secret" : "yoursecret"
 }

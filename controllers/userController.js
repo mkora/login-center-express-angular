@@ -1,17 +1,13 @@
 const User = require('../models/User');
 const validationSchemas = require('../validation/validationSchemas');
 
-exports.registerGet = function(req, res, next) {
-  res.render('register');
-}
+const jwt = require('jsonwebtoken');
+const config = require('config');
 
 exports.registerPost = function(req, res, next) {
   req.checkBody(validationSchemas.registrationSchema);
-  req.checkBody('confirm', 'Password do not match').equals(req.body.password);
-
   req.getValidationResult().then(errors => {
-    const {username,firstName, lastName, email, password, confirm} = req.body;
-
+    const {username,firstName, lastName, email, password} = req.body;
     const newUser = new User({
         username: username,
         firstName: firstName,
@@ -22,9 +18,10 @@ exports.registerPost = function(req, res, next) {
 
     // validation errors
     if (!errors.isEmpty()) {
-        res.render('register', {
-            newUser: newUser,
-            errors: errors.mapped()
+        const err = errors.array().shift();
+        res.json({
+          success: false,
+          msg: `A validation error has occurred: ${err.msg}`
         });
     } else {
       // user already exists
@@ -32,14 +29,22 @@ exports.registerPost = function(req, res, next) {
         if (err) return next(err);
 
         if (user) {
-          req.flash('error_msg', `The specified username '${username}' already exists.`);
-          res.redirect('/users/register');
-
+          res.json({
+            success: false,
+            msg: `The specified username '${username}' already exists.`
+          });
         } else {
           // data is valid
           User.createUser(newUser, createdUser => {
-              req.flash('success_msg', `User ${username} was successfully created.`);
-              res.redirect('/users/login');
+            res.json({
+              success: true,
+              user: {
+                username: createdUser.username,
+                email: createdUser.email,
+                firstName: createdUser.firstName,
+                lastName: createdUser.lastName
+              },
+              msg: `User ${username} was successfully created.`});
           });
         }
       });
@@ -48,31 +53,54 @@ exports.registerPost = function(req, res, next) {
   });
 }
 
-exports.loginGet = function(req, res, next) {
-  res.render('login');
-}
-
-exports.loginPost = function(req, res, next) {
+exports.authPost = function(req, res, next) {
   req.checkBody(validationSchemas.loginSchema);
   req.getValidationResult().then(errors => {
+    const {username, password} = req.body;
     // validation errors
     if (!errors.isEmpty()) {
-        res.render('login', {
-            username: req.body.username,
-            errors: errors.mapped()
+        const err = errors.array().shift();
+        res.json({
+          success: false,
+          msg: `A validation error has occurred: ${err.msg}`
         });
     } else {
-      next();
+      User.findUserByUsername(username, (err, user) => {
+        if (err) return next(err);
+        if (!user) {
+          return res.json({
+            success: false,
+            msg: `Incorrect username.`
+          });
+        } else {
+          User.isValidPassword(password, user.password, isMatch => {
+            if (isMatch) {
+              const token = 'JWT ' + jwt.sign({data: user}, config.get('secret'), {expiresIn: 60 * 60 * 24});
+
+              res.json({
+                success: true,
+                tokren: token,
+                user: {
+                  username: user.username,
+                  email: user.email,
+                  firstName: user.firstName,
+                  lastName: user.lastName
+                }
+              });
+            } else {
+              return res.json({success: false,
+                msg: `Incorrect password.`});
+            }
+          });
+        }
+      });
     }
   });
 }
 
-exports.logoutGet = function(req, res, next) {
-  req.logout();
-  req.flash('success_msg', `You are logged out.`);
-  res.redirect('/users/login');
-}
-
-exports.dashboardGet = function(req, res, next) {
-  res.render('dashboard');
+exports.profileGet = function(req, res, next) {
+  res.json({
+    success: true,
+    user: req.user
+  });
 }

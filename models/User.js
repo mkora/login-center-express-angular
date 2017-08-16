@@ -47,7 +47,8 @@ module.exports.createUser = function(newUser, callback) {
         if (err) throw err;
         newUser.password = hash;
         newUser.save()
-          .then(callback);
+          .then(callback)
+          .catch(e => console.error(e));
     });
   });
 }
@@ -62,5 +63,6 @@ module.exports.findUserById = function(id, callback) {
 
 module.exports.isValidPassword = function(password, hash, callback) {
   bcrypt.compare(password, hash)
-    .then(callback);
+    .then(callback)
+    .catch(e => console.error(e));
 }
