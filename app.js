@@ -31,7 +31,7 @@ mongoose.connect(config.get('db.uri'), config.get('db.options'))
 const index = require('./routes/index');
 const users = require('./routes/users');
 app.use('/', index);
-app.use('/users', users);
+app.use('/api', users);
 
 // catch 404
 app.use((req, res, next) => {

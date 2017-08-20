@@ -79,7 +79,7 @@ exports.authPost = function(req, res, next) {
 
               res.json({
                 success: true,
-                tokren: token,
+                token: token,
                 user: {
                   username: user.username,
                   email: user.email,
